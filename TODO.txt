@@ -1,4 +1,0 @@
-2013 04 19
-- implement search history
-- highlighting
-- completion
