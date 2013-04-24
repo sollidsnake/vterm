@@ -1,5 +1,5 @@
-" Vim shell plugin
-" (:)
+" VTerm
+" terminal inside vim
 
 "let g:VTermPs1 = system("echo \[$USER\"@\"$HOSTNAME `pwd | awk -F\"/\" '{print $NF}' | sed 's/\\///' `]$  ")
 "let g:VTermPs1 = system("echo \[$USER\"@\"$HOSTNAME `echo ". expand("%:p:h") . " | sed 's/\\///' `]$  ")
@@ -14,6 +14,33 @@ let g:VTermPersistentInsert=1
 let g:VTermKeyPrevHist = "<C-p>"
 let g:VTermKeyNextHist = "<C-n>"
 let g:VTermKeyClear = "<C-l>"
+
+" start the term
+function! vterm#Start()
+  " shell
+  execute "e /tmp/vim-shell" . s:VTermCount . ".vterm"
+  let g:VTermCurId = 0
+  let s:VTermCount += 1
+  
+  " do not ask to confirm changes when close the term
+  autocmd QuitPre <buffer> silent write | return 0
+  autocmd CursorMoved <buffer> call vterm#LimitCursor()
+  
+  call vterm#Clear( 0 )
+  
+  " buffer mapping
+  inoremap <buffer><Enter> <Esc>:call vterm#Cmd()<cr>
+  nnoremap <buffer><Enter> <Esc>:call vterm#Cmd()<cr>
+  
+  exec "inoremap <silent> <buffer> " . g:VTermKeyPrevHist . " <Esc>:call vterm#GoHist('prev')<CR>i"
+  exec "nnoremap <silent> <buffer> " . g:VTermKeyPrevHist . " <Esc>:call vterm#GoHist('prev')<CR>"
+  exec "inoremap <silent> <buffer> " . g:VTermKeyNextHist . " <Esc>:call vterm#GoHist('next')<CR>i"
+  exec "nnoremap <silent> <buffer> " . g:VTermKeyNextHist . " <Esc>:call vterm#GoHist('next')<CR>"
+  exec "inoremap <silent> <buffer> " . g:VTermKeyClear . " <Esc>:call vterm#Clear( 1 )<cr>"
+  exec "nnoremap <silent> <buffer> " . g:VTermKeyClear . " <Esc>:call vterm#Clear( 1 )<cr>"
+  
+  call s:VTermPersistentInsert()
+endfunction
 
 " Format ps1 variable
 function! vterm#SetPs1( ps1 )
@@ -79,7 +106,7 @@ function! vterm#Cmd()
   call vterm#Cd(l:cmd)
   
   " print ps1 variable on the screen
-  call vterm#PutPs1()
+  call vterm#PutPs1(0)
   
   " the put command will write an extra line on the screen,
   " if the output command, we don't need that extra line,
@@ -95,20 +122,33 @@ function! vterm#Cmd()
 endfunction
 
 " print ps1 in the screen
-function! vterm#PutPs1()
+function! vterm#PutPs1( cmd )
   " get the formated ps1 string
   let g:VTermPs1Lit = vterm#SetPs1(g:VTermPs1)
   " check the length for parsing the command
   let g:VTermPs1Len = strlen(g:VTermPs1Lit)
-
   " check for extra spaces and ignore them in the count for the entered command
+  
   let l:c = 0
+  
   while l:c < g:VTermExtraSpace
     let g:VTermPs1Lit .= " "
     let l:c += 1
   endwhile
 
   "call feedkeys("\<Esc>:put = g:VTermPs1Lit\<CR>kJ", "n")
+  if !empty(a:cmd) 
+    let l:cmd = a:cmd
+    " remove initial space characters
+    while l:cmd[0]==" "
+      let l:cmd = substitute(l:cmd, " ", "", "")
+    endwhile
+    if empty(l:cmd)
+      let l:cmd = " "
+    endif
+    let g:VTermPs1Lit = strpart(g:VTermPs1Lit, 0, strlen(g:VTermPs1Lit)-1) . l:cmd
+  endif
+  
   put = g:VTermPs1Lit
   "call feedkeys("kJ$", "n")
   if line('.') == 2
@@ -146,13 +186,13 @@ function! vterm#Clear( keepCmd )
   silent %s/.*//g|%s/\n//g
   
   " print ps1 on the screen
-  call vterm#PutPs1()
+  if exists("l:cmd")
+    call vterm#PutPs1(l:cmd)
+  else
+    call vterm#PutPs1(0)
+  endif
   
   " if asked to keep cmd, print it on the screen
-  if exists("l:cmd")
-    put = l:cmd
-    1join
-  endif
   
   call cursor('.', col('$'))
   call s:VTermPersistentInsert()
@@ -207,35 +247,11 @@ function! vterm#GoHist( where )
   endif
   
   " change the current cmd for the history cmd
-  exec "$s/.*\\zs" . l:cmd . "/" . l:sub . "/"
+  silent $d
+  
+  call vterm#PutPs1( l:sub )
+  "exec "silent $s/.*\\zs" . l:cmd . "/" . l:sub . "/"
   call cursor ( line('.'), col('$') )
-endfunction
-
-" start the term
-function! vterm#Start()
-  " shell
-  execute "e /tmp/vim-shell" . s:VTermCount . ".vterm"
-  let g:VTermCurId = 0
-  let s:VTermCount += 1
-  
-  " do not ask to confirm changes when close the term
-  autocmd QuitPre <buffer> silent write | return 0
-  autocmd CursorMoved <buffer> call vterm#LimitCursor()
-  
-  call vterm#Clear( 0 )
-  
-  " buffer mapping
-  inoremap <buffer><Enter> <Esc>:call vterm#Cmd()<cr>
-  nnoremap <buffer><Enter> <Esc>:call vterm#Cmd()<cr>
-  
-  exec "inoremap <silent> <buffer> " . g:VTermKeyPrevHist . " <Esc>:call vterm#GoHist('prev')<CR>i"
-  exec "nnoremap <silent> <buffer> " . g:VTermKeyPrevHist . " <Esc>:call vterm#GoHist('prev')<CR>"
-  exec "inoremap <silent> <buffer> " . g:VTermKeyNextHist . " <Esc>:call vterm#GoHist('next')<CR>i"
-  exec "nnoremap <silent> <buffer> " . g:VTermKeyNextHist . " <Esc>:call vterm#GoHist('next')<CR>"
-  exec "inoremap <silent> <buffer> " . g:VTermKeyClear . " <Esc>:call vterm#Clear( 1 )<cr>"
-  exec "nnoremap <silent> <buffer> " . g:VTermKeyClear . " <Esc>:call vterm#Clear( 1 )<cr>"
-  
-  call s:VTermPersistentInsert()
 endfunction
 
 function! s:VTermPersistentInsert()
