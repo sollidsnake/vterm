@@ -30,8 +30,8 @@ function! vterm#Start()
   call vterm#Clear( 0 )
   
   " buff mapping
-  inoremap <buffer><Enter> <Esc>:call vterm#Cmd()<cr>
-  nnoremap <buffer><Enter> <Esc>:call vterm#Cmd()<cr>
+  inoremap <buffer><silent><Enter> <Esc>:call vterm#Cmd()<cr>
+  nnoremap <buffer><silent><Enter> <Esc>:call vterm#Cmd()<cr>
   
   exec "inoremap <silent> <buffer> " . g:VTermKeyPrevHist . " <Esc>:call vterm#GoHist('prev')<CR>i"
   exec "nnoremap <silent> <buffer> " . g:VTermKeyPrevHist . " <Esc>:call vterm#GoHist('prev')<CR>"
