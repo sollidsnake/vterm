@@ -41,3 +41,6 @@ after entering your commands.
 ```
 let g:VTermPersistentInsert=1
 ```
+
+###Doc
+Please read the doc file for further configurations
