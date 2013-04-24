@@ -2,8 +2,7 @@
 =====
 
 ##Intro
-The goal of verun is to provide a clone of unix terminal inside vim without
-any dependencies.
+The goal of vterm is to provide a clone of unix terminal inside vim that works right out side of the box without any dependencies.
 
 ##Instalation
 Use your favorite package manager to install it or place `autoload` and `plugin`
