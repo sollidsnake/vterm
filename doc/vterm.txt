@@ -1,0 +1,49 @@
+*vterm.txt* Terminal emulator inside vim.
+
+INTRODUCTION                            *vterm*
+The goal of verun is to provide a clone of unix terminal inside vim without
+any dependencies.  To start using it, run |:VTermStart|.
+
+*vterm-commands*
+To start vterm, run
+	*:VTermStart*
+
+*vterm-history*
+VTerm keeps you search history. You can call the previous and next commands by pressing
+<C-p> and <C-n> respectively. If you wish you can change the mappings by setting the
+following variables:
+	let g:VTermKeyPrevHist="<C-p>" " call previouns command in history
+	let g:VTermKeyNextHist="<C-n>" " call next command in history
+
+*vterm-ps1*
+You can customize the ps1 variable by changing the following variable:
+	let g:VTermPs1 = "[%U@%H %D] $"
+
+	%U is your username
+	%H is your hostname
+	%D is the working directory
+
+*vterm-persistent-insert*
+If this variable is non-zero, VTerm will enter automatic in insert mode when start VTerm and
+after entering your commands.
+	let g:VTermPersistentInsert=1
+	
+*vterm-extra-space*
+This variable says how many spaces will you have after your PS1 variable.
+	let g:VTermExtraSpace = 2
+
+*vterm-clear*
+Defines the mapping used to clear the screen.
+	let g:VTermKeyClear = "<C-l>"
+
+*vterm-todo*
+- Implement auto completion
+- Make vterm support colors
+- Make executable programs work properly
+- Key mappings will only work for next buffers and previous mappings won't be
+  cleared.
+
+*vterm-about*
+Author: jessenzr at gmail dot com
+Please feel free to contact me for suggestions, critics, bugs or anything :)
+The latest version can be found on https://github.com/sollidsnake/vterm
