@@ -17,7 +17,7 @@ let g:VTermKeyClear = "<C-l>"
 
 " start the term
 function! vterm#Start()
-  " shell
+  " open buffer in tmp dir
   execute "e /tmp/vim-shell" . s:VTermCount . ".vterm"
   let g:VTermCurId = 0
   let s:VTermCount += 1
@@ -26,9 +26,10 @@ function! vterm#Start()
   autocmd QuitPre <buffer> silent write | return 0
   autocmd CursorMoved <buffer> call vterm#LimitCursor()
   
+  " clear screen in case it's an old buffer
   call vterm#Clear( 0 )
   
-  " buffer mapping
+  " buff mapping
   inoremap <buffer><Enter> <Esc>:call vterm#Cmd()<cr>
   nnoremap <buffer><Enter> <Esc>:call vterm#Cmd()<cr>
   
@@ -136,7 +137,6 @@ function! vterm#PutPs1( cmd )
     let l:c += 1
   endwhile
 
-  "call feedkeys("\<Esc>:put = g:VTermPs1Lit\<CR>kJ", "n")
   if !empty(a:cmd) 
     let l:cmd = a:cmd
     " remove initial space characters
@@ -150,13 +150,11 @@ function! vterm#PutPs1( cmd )
   endif
   
   put = g:VTermPs1Lit
-  "call feedkeys("kJ$", "n")
   if line('.') == 2
     silent 1join
   else 
     silent $join
   endif
-  
 endfunction
 
 function! vterm#LimitCursor()
@@ -192,8 +190,6 @@ function! vterm#Clear( keepCmd )
     call vterm#PutPs1(0)
   endif
   
-  " if asked to keep cmd, print it on the screen
-  
   call cursor('.', col('$'))
   call s:VTermPersistentInsert()
 endfunction
@@ -222,7 +218,7 @@ function! vterm#GoHist( where )
   endif
   
   if a:where == "prev" " treat prev history condition
-    " dont let the CurId be higher than zero
+    " dont let the CurId be lower than zero
     if g:VTermCurId < 1
       let g:VTermCurId = 1
     endif
@@ -249,17 +245,20 @@ function! vterm#GoHist( where )
   " change the current cmd for the history cmd
   silent $d
   
+  " print ps1 with the correspondent command
   call vterm#PutPs1( l:sub )
   "exec "silent $s/.*\\zs" . l:cmd . "/" . l:sub . "/"
   call cursor ( line('.'), col('$') )
 endfunction
 
+" function to manage the persistent insert mode
 function! s:VTermPersistentInsert()
   if g:VTermPersistentInsert > 0
     startinsert
   endif
 endfunction
 
+" function to go to the start of the line
 function! vterm#GoToStart()
   if line('.') == line('$')
     call cursor( line('.'),  g:VTermPs1Len + g:VTermExtraSpace)
