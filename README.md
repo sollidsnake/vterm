@@ -7,7 +7,7 @@ The goal of verun is to provide a clone of unix terminal inside vim without
 any dependencies.
 
 ##Instalation
-Use your favorite package manager to install it or place autoload and plugin
+Use your favorite package manager to install it or place `autoload` and `plugin`
 folders in your ~/.vim directory.
 
 ##Start
