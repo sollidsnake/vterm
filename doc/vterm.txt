@@ -1,7 +1,7 @@
 *vterm.txt* Terminal emulator inside vim.
 
 INTRODUCTION                            *vterm*
-The goal of verun is to provide a clone of unix terminal inside vim without
+The goal of vterm is to provide a clone of unix terminal inside vim without
 any dependencies.  To start using it, run |:VTermStart|.
 
 *vterm-commands*
