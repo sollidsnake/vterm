@@ -2,7 +2,7 @@
 =====
 
 ##Intro
-The goal of vterm is to provide a clone of unix terminal inside vim that works right out side of the box without any dependencies.
+The goal of vterm is to provide a clone of unix terminal inside vim that works right out of the box without any dependencies.
 
 ##Instalation
 Use your favorite package manager to install it or place `autoload` and `plugin`
@@ -17,7 +17,7 @@ To start vterm, run
 ##Configuration
 ###History
 VTerm keeps you search history. You can call the previous and next commands by pressing
-<C-p> and <C-n> respectively. If you wish you can change the mappings by setting the
+`<C-p>` and `<C-n>` respectively. If you wish you can change the mappings by setting the
 following variables:
 ```
 let g:VTermKeyPrevHist="<C-p>" " call previouns command in history
