@@ -1,2 +1,2 @@
 
-command VTermStart call vterm#Start()
+command! VTermStart call vterm#Start()

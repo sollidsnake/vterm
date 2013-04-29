@@ -1,0 +1,11 @@
+2013 04 19
+- implement search history
+- highlighting
+- completion
+- support for multiple instances (DONE)
+- ps1 from terminal command (?)
+- clear cmd: create parammeter to chose if
+    will keep the cmd when clearing
+- fucking document it
+- Bad logic in clear function. Works, but must improve the code
+- error if ctrl l out of command line

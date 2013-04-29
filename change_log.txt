@@ -1,0 +1,8 @@
+1.1 2013 04 28
+- hostname fixed for zsh shells
+- make persistent insert work with previous and next commands in history
+- The nomodifiable option was causing some conflicts. Temporarily(?) removed.
+- clear command will just scroll the screen instead of deleting everything
+
+2013 04 19
+- removed save confirmation when exiting file

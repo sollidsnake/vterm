@@ -19,11 +19,12 @@ let g:VTermKeyClear = "<C-l>"
 function! vterm#Start()
   " open buffer in tmp dir
   execute "e /tmp/vim-shell" . s:VTermCount . ".vterm"
+  setlocal buftype="nowrite"
   let g:VTermCurId = 0
   let s:VTermCount += 1
   
   " do not ask to confirm changes when close the term
-  autocmd QuitPre <buffer> silent write | return 0
+  autocmd QuitPre <buffer> silent write
   autocmd CursorMoved <buffer> call vterm#LimitCursor()
   
   " clear screen in case it's an old buffer
@@ -33,12 +34,12 @@ function! vterm#Start()
   inoremap <buffer><silent><Enter> <Esc>:call vterm#Cmd()<cr>
   nnoremap <buffer><silent><Enter> <Esc>:call vterm#Cmd()<cr>
   
-  exec "inoremap <silent> <buffer> " . g:VTermKeyPrevHist . " <Esc>:call vterm#GoHist('prev')<CR>i"
   exec "nnoremap <silent> <buffer> " . g:VTermKeyPrevHist . " <Esc>:call vterm#GoHist('prev')<CR>"
-  exec "inoremap <silent> <buffer> " . g:VTermKeyNextHist . " <Esc>:call vterm#GoHist('next')<CR>i"
   exec "nnoremap <silent> <buffer> " . g:VTermKeyNextHist . " <Esc>:call vterm#GoHist('next')<CR>"
-  exec "inoremap <silent> <buffer> " . g:VTermKeyClear . " <Esc>:call vterm#Clear( 1 )<cr>"
-  exec "nnoremap <silent> <buffer> " . g:VTermKeyClear . " <Esc>:call vterm#Clear( 1 )<cr>"
+  exec "nnoremap <silent> <buffer> " . g:VTermKeyClear . " <Esc>:call vterm#Clear( 1 )<CR>"
+  exec "inoremap <silent> <buffer> " . g:VTermKeyPrevHist . " <Esc>:call vterm#GoHist('prev')<CR>i"
+  exec "inoremap <silent> <buffer> " . g:VTermKeyNextHist . " <Esc>:call vterm#GoHist('next')<CR>i"
+  exec "inoremap <silent> <buffer> " . g:VTermKeyClear . " <Esc>:call vterm#Clear( 1 )<CR>"
   
   call s:VTermPersistentInsert()
 endfunction
@@ -54,7 +55,7 @@ function! vterm#SetPs1( ps1 )
   let l:ps1 = substitute((substitute(l:ps1, "%U", system("echo $USER"), "")), "\n", "", "")
   let l:ps1 = substitute(l:ps1, "%D", l:dir, "")
   
-  let l:ps1 = substitute((substitute(l:ps1, "%H", system("echo $HOSTNAME"), "")), "\n", "", "")
+  let l:ps1 = substitute((substitute(l:ps1, "%H", system("hostname"), "")), "\n", "", "")
 
   return l:ps1
 endfunction
@@ -96,6 +97,7 @@ function! vterm#Cmd()
     let l:out = ""
   else " execute cmd and store it in hist variable
     let l:out = system(l:cmd)
+    echom l:cmd
     call add(g:VTermHist, l:cmd)
     let g:VTermCurId = len(g:VTermHist)
     let s:VTermCurCmd = ""
@@ -164,38 +166,23 @@ function! vterm#LimitCursor()
   endif
   
   " if the cursor is not in the last line, no need to write anything (does it?)
-  if line('$') != line('.')
-    setlocal nomodifiable
-  else
-    setlocal modifiable
-  endif
+  "if line('$') != line('.')
+    "setlocal nomodifiable
+  "else
+    "setlocal modifiable
+  "endif
 endfunction
 
 " clear the screen
 function! vterm#Clear( keepCmd )
   " a:keepCmd parameter will decide if the current
   " cmd will be erased or kept
-  
-  if !empty(a:keepCmd)
-    let l:cmd = strpart(getline('.'), (g:VTermPs1Len ) , strlen(getline('.')))
-  endif
-  
-  " delete everything
-  silent %s/.*//g|%s/\n//g
-  
-  " print ps1 on the screen
-  if exists("l:cmd")
-    call vterm#PutPs1(l:cmd)
-  else
-    call vterm#PutPs1(0)
-  endif
-  
   call cursor('.', col('$'))
+  normal! zt
   call s:VTermPersistentInsert()
 endfunction
 
 function! vterm#GoHist( where )
-  
   " nothing to do if history variable empty
   if empty(g:VTermHist)
     return 0
@@ -249,6 +236,7 @@ function! vterm#GoHist( where )
   call vterm#PutPs1( l:sub )
   "exec "silent $s/.*\\zs" . l:cmd . "/" . l:sub . "/"
   call cursor ( line('.'), col('$') )
+  call s:VTermPersistentInsert()
 endfunction
 
 " function to manage the persistent insert mode
