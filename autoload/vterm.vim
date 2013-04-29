@@ -19,16 +19,22 @@ let g:VTermKeyClear = "<C-l>"
 function! vterm#Start()
   " open buffer in tmp dir
   execute "e /tmp/vim-shell" . s:VTermCount . ".vterm"
+  
+  " delete everything
+  %s/^.*//g | %join
+  
   setlocal buftype="nowrite"
   let g:VTermCurId = 0
   let s:VTermCount += 1
   
   " do not ask to confirm changes when close the term
   autocmd QuitPre <buffer> silent write
+  " do not let the cursor go over the active ps1 variable
   autocmd CursorMoved <buffer> call vterm#LimitCursor()
   
-  " clear screen in case it's an old buffer
-  call vterm#Clear( 0 )
+  " print ps1 variable
+  call vterm#PutPs1(0)
+  call cursor(line('$'), col('$'))
   
   " buff mapping
   inoremap <buffer><silent><Enter> <Esc>:call vterm#Cmd()<cr>
@@ -97,7 +103,6 @@ function! vterm#Cmd()
     let l:out = ""
   else " execute cmd and store it in hist variable
     let l:out = system(l:cmd)
-    echom l:cmd
     call add(g:VTermHist, l:cmd)
     let g:VTermCurId = len(g:VTermHist)
     let s:VTermCurCmd = ""

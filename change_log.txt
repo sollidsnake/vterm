@@ -1,3 +1,7 @@
+1.11 2013 04 28
+- minor fixes in start function
+- updated todo in readme
+
 1.1 2013 04 28
 - hostname fixed for zsh shells
 - make persistent insert work with previous and next commands in history

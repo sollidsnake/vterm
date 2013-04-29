@@ -45,6 +45,7 @@ let g:VTermPersistentInsert=1
 - highlighting
 - completion
 - use a bash script/command to get the ps1 variable (?)
+- handle execution of terminal based applications
 
 ###Doc
 Please read the doc file for further configurations
