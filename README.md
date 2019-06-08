@@ -1,21 +1,21 @@
-#vterm : Terminal emulator inside vim.
+# vterm : Terminal emulator inside vim.
 =====
 
 ##Intro
 The goal of vterm is to provide a clone of unix terminal inside vim that works right out of the box without any dependencies.
 
-##Instalation
+## Instalation
 Use your favorite package manager to install it or place `autoload` and `plugin`
 folders in your ~/.vim directory.
 
-##Start
+## Start
 To start vterm, run
 ```
 :VTermStart
 ```
 
-##Configuration
-###History
+## Configuration
+### History
 VTerm keeps you search history. You can call the previous and next commands by pressing
 `<C-p>` and `<C-n>` respectively. If you wish you can change the mappings by setting the
 following variables:
@@ -24,7 +24,7 @@ let g:VTermKeyPrevHist="<C-p>" " call previouns command in history
 let g:VTermKeyNextHist="<C-n>" " call next command in history
 ```
 
-###PS1 variable
+### PS1 variable
 You can customize the ps1 variable by changing the following variable:
 ```
 let g:VTermPs1 = "[%U@%H %D] $"
@@ -41,10 +41,10 @@ after entering your commands.
 let g:VTermPersistentInsert=1
 ```
 
-###Doc
+### Doc
 Please read the doc file for further configurations
 
-###Todo
+### Todo
 - highlighting
 - completion
 - use a bash script/command to get the ps1 variable (?)
