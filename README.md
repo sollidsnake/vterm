@@ -1,7 +1,6 @@
 # vterm : Terminal emulator inside vim.
-=====
 
-##Intro
+## Intro
 The goal of vterm is to provide a clone of unix terminal inside vim that works right out of the box without any dependencies.
 
 ## Instalation
@@ -34,7 +33,7 @@ let g:VTermPs1 = "[%U@%H %D] $"
 	%H is your hostname
 	%D is the working directory
 
-###Persistent insert
+### Persistent insert
 If this variable is non-zero, VTerm will enter automatic in insert mode when start VTerm and
 after entering your commands.
 ```
